@@ -10,9 +10,70 @@ sealed class IPCProvider : IDisposable
 {
     private Action? _disposeActions;
 
-    public IPCProvider(RotationModuleManager autorotation, ActionManagerEx amex, MovementOverride movement, AIManager ai)
+    public IPCProvider(BossModuleManager bossmod, AIHints hints, RotationModuleManager autorotation, ActionManagerEx amex, MovementOverride movement, AIManager ai)
     {
         Register("HasModuleByDataId", (uint dataId) => BossModuleRegistry.FindByOID(dataId) != null);
+
+        // Timeline IPC endpoints for external plugin integration (e.g. RotationSolverReborn)
+        Register("HasActiveModule", () => bossmod.ActiveModule?.StateMachine.ActiveState != null);
+        Register("ActiveModuleName", () => bossmod.ActiveModule?.PrimaryActor.Name.ToString());
+
+        Register("Timeline.NextRaidwideIn", () =>
+        {
+            var module = bossmod.ActiveModule;
+            if (module?.StateMachine.ActiveState == null)
+                return float.MaxValue;
+            var next = module.StateMachine.NextTransitionWithFlag(StateMachine.StateHint.Raidwide);
+            return next == DateTime.MaxValue ? float.MaxValue : (float)(next - DateTime.Now).TotalSeconds;
+        });
+
+        Register("Timeline.NextTankbusterIn", () =>
+        {
+            var module = bossmod.ActiveModule;
+            if (module?.StateMachine.ActiveState == null)
+                return float.MaxValue;
+            var next = module.StateMachine.NextTransitionWithFlag(StateMachine.StateHint.Tankbuster);
+            return next == DateTime.MaxValue ? float.MaxValue : (float)(next - DateTime.Now).TotalSeconds;
+        });
+
+        Register("Timeline.NextKnockbackIn", () =>
+        {
+            var module = bossmod.ActiveModule;
+            if (module?.StateMachine.ActiveState == null)
+                return float.MaxValue;
+            var next = module.StateMachine.NextTransitionWithFlag(StateMachine.StateHint.Knockback);
+            return next == DateTime.MaxValue ? float.MaxValue : (float)(next - DateTime.Now).TotalSeconds;
+        });
+
+        Register("Hints.NextDamageIn", () =>
+        {
+            var predicted = hints.PredictedDamage;
+            if (predicted.Count == 0)
+                return float.MaxValue;
+            return (float)(predicted[0].Activation - DateTime.Now).TotalSeconds;
+        });
+
+        Register("Hints.NextDamageType", () =>
+        {
+            var predicted = hints.PredictedDamage;
+            if (predicted.Count == 0)
+                return 0;
+            return (int)predicted[0].Type;
+        });
+
+        Register("Hints.SpecialModeIn", () =>
+        {
+            if (hints.ImminentSpecialMode == default)
+                return float.MaxValue;
+            return (float)(hints.ImminentSpecialMode.activation - DateTime.Now).TotalSeconds;
+        });
+
+        Register("Hints.SpecialModeType", () =>
+        {
+            if (hints.ImminentSpecialMode == default)
+                return 0;
+            return (int)hints.ImminentSpecialMode.mode;
+        });
         Register("Configuration", (List<string> args, bool save) => Service.Config.ConsoleCommand(args.AsSpan(), save));
 
         var lastModified = DateTime.Now;
