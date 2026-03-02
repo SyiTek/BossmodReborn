@@ -18,6 +18,44 @@ sealed class IPCProvider : IDisposable
         Register("HasActiveModule", () => bossmod.ActiveModule?.StateMachine.ActiveState != null);
         Register("ActiveModuleName", () => bossmod.ActiveModule?.PrimaryActor.Name.ToString());
 
+        // Debug endpoint: walks the state machine and reports what it finds
+        Register("Debug.TimelineWalk", () =>
+        {
+            var module = bossmod.ActiveModule;
+            if (module == null)
+                return "No active module";
+            var sm = module.StateMachine;
+            if (sm.ActiveState == null)
+                return "ActiveState is null";
+
+            var sb = new System.Text.StringBuilder();
+            sb.Append($"Phase={sm.ActivePhaseIndex} State={sm.ActiveState.ID:X}({sm.ActiveState.Name}) Dur={sm.ActiveState.Duration:F1}s Hint={sm.ActiveState.EndHint}");
+            var count = 0;
+            var next = sm.ActiveState;
+            var foundRW = false;
+            var foundTB = false;
+            while (next != null && count < 20)
+            {
+                if (!foundRW && next.EndHint.HasFlag(StateMachine.StateHint.Raidwide))
+                {
+                    foundRW = true;
+                    sb.Append($" | RW@{next.ID:X}({next.Name})");
+                }
+                if (!foundTB && next.EndHint.HasFlag(StateMachine.StateHint.Tankbuster))
+                {
+                    foundTB = true;
+                    sb.Append($" | TB@{next.ID:X}({next.Name})");
+                }
+                next = next.NextStates?.Length == 1 ? next.NextStates[0] : null;
+                count++;
+            }
+            if (!foundRW) sb.Append(" | RW=NONE");
+            if (!foundTB) sb.Append(" | TB=NONE");
+            if (next == null && count < 20) sb.Append($" | Chain ended at {count} states");
+            if (count >= 20) sb.Append(" | Walked 20+ states");
+            return sb.ToString();
+        });
+
         Register("Timeline.NextRaidwideIn", () =>
         {
             var module = bossmod.ActiveModule;
