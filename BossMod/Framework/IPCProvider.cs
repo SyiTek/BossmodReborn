@@ -45,6 +45,42 @@ sealed class IPCProvider : IDisposable
             return next == DateTime.MaxValue ? float.MaxValue : (float)(next - DateTime.Now).TotalSeconds;
         });
 
+        Register("Timeline.NextDowntimeIn", () =>
+        {
+            var module = bossmod.ActiveModule;
+            if (module?.StateMachine.ActiveState == null)
+                return float.MaxValue;
+            var next = module.StateMachine.NextTransitionWithFlag(StateMachine.StateHint.DowntimeStart);
+            return next == DateTime.MaxValue ? float.MaxValue : (float)(next - DateTime.Now).TotalSeconds;
+        });
+
+        Register("Timeline.NextDowntimeEndIn", () =>
+        {
+            var module = bossmod.ActiveModule;
+            if (module?.StateMachine.ActiveState == null)
+                return float.MaxValue;
+            var next = module.StateMachine.NextTransitionWithFlag(StateMachine.StateHint.DowntimeEnd);
+            return next == DateTime.MaxValue ? float.MaxValue : (float)(next - DateTime.Now).TotalSeconds;
+        });
+
+        Register("Timeline.NextVulnerableIn", () =>
+        {
+            var module = bossmod.ActiveModule;
+            if (module?.StateMachine.ActiveState == null)
+                return float.MaxValue;
+            var next = module.StateMachine.NextTransitionWithFlag(StateMachine.StateHint.VulnerableStart);
+            return next == DateTime.MaxValue ? float.MaxValue : (float)(next - DateTime.Now).TotalSeconds;
+        });
+
+        Register("Timeline.NextVulnerableEndIn", () =>
+        {
+            var module = bossmod.ActiveModule;
+            if (module?.StateMachine.ActiveState == null)
+                return float.MaxValue;
+            var next = module.StateMachine.NextTransitionWithFlag(StateMachine.StateHint.VulnerableEnd);
+            return next == DateTime.MaxValue ? float.MaxValue : (float)(next - DateTime.Now).TotalSeconds;
+        });
+
         Register("Hints.NextDamageIn", () =>
         {
             var predicted = hints.PredictedDamage;
@@ -59,6 +95,31 @@ sealed class IPCProvider : IDisposable
             if (predicted.Count == 0)
                 return 0;
             return (int)predicted[0].Type;
+        });
+
+        // Type-specific damage prediction endpoints — search ALL entries for the first matching type
+        Register("Hints.NextRaidwideDamageIn", () =>
+        {
+            var predicted = hints.PredictedDamage;
+            var now = DateTime.Now;
+            for (var i = 0; i < predicted.Count; ++i)
+            {
+                if (predicted[i].Type == AIHints.PredictedDamageType.Raidwide)
+                    return (float)(predicted[i].Activation - now).TotalSeconds;
+            }
+            return float.MaxValue;
+        });
+
+        Register("Hints.NextTankbusterDamageIn", () =>
+        {
+            var predicted = hints.PredictedDamage;
+            var now = DateTime.Now;
+            for (var i = 0; i < predicted.Count; ++i)
+            {
+                if (predicted[i].Type == AIHints.PredictedDamageType.Tankbuster)
+                    return (float)(predicted[i].Activation - now).TotalSeconds;
+            }
+            return float.MaxValue;
         });
 
         Register("Hints.SpecialModeIn", () =>
