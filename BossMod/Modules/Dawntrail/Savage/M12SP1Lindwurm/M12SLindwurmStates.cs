@@ -16,6 +16,7 @@ sealed class M12SLindwurmStates : StateMachineBuilder
     private void Opening(uint id, float delay)
     {
         ComponentCondition<Slaughtershed>(id, delay, comp => comp.NumCasts > 0, "Slaughtershed", 300, 300) // First cast around 5:40.
+        .SetHint(StateMachine.StateHint.Raidwide)
         .ActivateOnEnter<Slaughtershed>()
         .ActivateOnEnter<TheFixer>()
         .ActivateOnEnter<MortalSlayer>()
