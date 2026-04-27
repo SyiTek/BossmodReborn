@@ -9,7 +9,7 @@ public enum OID : uint
     KinematicTurret = 0x4A39, // R1.2
     Aether = 0x4A3A, // R1.5
     GhostTrain = 0x4B81, // R2.72
-    _Gen_ = 0x4A36, // R1.0
+    ArcaneRevelationIndicator = 0x4A36, // R1.0
     DoomtrainHelper = 0x4A3B, // R1.0
     Helper = 0x233C
 }
@@ -110,9 +110,9 @@ public enum SID : uint
     _Gen_2 = 2552, // none->GhostTrain, extra=0x42B
     _Gen_3 = 4176, // none->GhostTrain, extra=0x0
     _Gen_SystemLock = 2578, // none->player, extra=0x0
-    _Gen_4 = 4721, // none->player, extra=0x0
+    UpHigh = 4721, // none->player, extra=0x0
     _Gen_5 = 3913, // none->Doomtrain, extra=0x3D7/0x3D8
-    _Gen_DesignatedConductor = 4719, // none->player, extra=0x0
+    DesignatedConductor = 4719, // none->player, extra=0x0
     _Gen_PhysicalVulnerabilityUp = 2940, // Helper->player, extra=0x0
 }
 

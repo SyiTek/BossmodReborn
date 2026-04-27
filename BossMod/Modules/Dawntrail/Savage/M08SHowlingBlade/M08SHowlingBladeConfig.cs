@@ -30,4 +30,20 @@ public sealed class M08SHowlingBladeConfig() : ConfigNode()
 
     [PropertyDisplay("Show Rinon/Toxic Friends tower spots for Lone Wolf's Lament")]
     public bool LoneWolfsLamentHints = true;
+
+    public enum TerrestrialRageStrategy
+    {
+        [PropertyDisplay("No hints")]
+        None,
+        [PropertyDisplay("Clocks - stack marker goes to N/NE safe spot, spreads adjust")]
+        Clock,
+    }
+
+    [PropertyDisplay("Terrestrial Rage")]
+    public TerrestrialRageStrategy TRHints = TerrestrialRageStrategy.None;
+
+    [PropertyDisplay("Windfang/Stonefang clock spots", tooltip: "Only used by AI")]
+    [GroupDetails(["N", "NE", "E", "SE", "S", "SW", "W", "NW"])]
+    [GroupPreset("Default", [0, 4, 6, 2, 5, 3, 7, 1])]
+    public GroupAssignmentUnique WindfangStonefangSpots = new() { Assignments = [0, 4, 6, 2, 5, 3, 7, 1] };
 }

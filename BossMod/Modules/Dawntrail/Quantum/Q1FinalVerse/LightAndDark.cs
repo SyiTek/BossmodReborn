@@ -6,6 +6,9 @@ sealed class LightAndDark(BossModule module) : Endwalker.DeepDungeon.PilgrimsTra
     private readonly Q1FinalVerse bossmod = (Q1FinalVerse)module;
     private bool boundsOfSinTowers;
 
+    public BitMask LightBuff => lightBuff;
+    public BitMask DarkBuff => darkBuff;
+
     public override ReadOnlySpan<AOEInstance> ActiveAOEs(int slot, Actor actor) => CollectionsMarshal.AsSpan(_aoes);
 
     public override void OnCastStarted(Actor caster, ActorCastInfo spell)

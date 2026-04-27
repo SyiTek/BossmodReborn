@@ -10,6 +10,8 @@ sealed class ElectrayMedium(BossModule module) : Components.SimpleAOEs(module, (
 sealed class ElectrayShort(BossModule module) : Components.SimpleAOEs(module, (uint)AID.Electray3, new AOEShapeRect(5f, 2.5f));
 [SkipLocalsInit]
 sealed class LightningBurst(BossModule module) : Components.BaitAwayIcon(module, 5f, (uint)IconID.LightningBurst, (uint)AID.LightningBurst, 5.6f, tankbuster: true, damageType: AIHints.PredictedDamageType.Tankbuster);
+[SkipLocalsInit]
+sealed class ZoomCounter(BossModule module) : Components.CastCounter(module, (uint)AID.Teleport2);
 
 [ModuleInfo(BossModuleInfo.Maturity.WIP,
 StatesType = typeof(Ex7DoomtrainStates),

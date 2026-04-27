@@ -50,8 +50,10 @@ sealed class M06SSugarRiotStates : StateMachineBuilder
             .ActivateOnEnter<ColorClash>();
         ComponentCondition<SingleDoubleStyle1>(id + 0x20u, 7.2f, comp => comp.AOEs.Count != 0, "Double Style starts")
             .ActivateOnEnter<SingleDoubleStyle1>();
-        ComponentCondition<Wingmark>(id + 0x30u, 8.6f, comp => comp.StunStatus != default, "Stun");
-        ComponentCondition<Wingmark>(id + 0x40u, 3f, comp => comp.StunStatus == default, "Knockback resolves");
+        ComponentCondition<Wingmark>(id + 0x30u, 8.6f, comp => comp.StunStatus != default, "Stun")
+            .SetHint(StateMachine.StateHint.DowntimeStart);
+        ComponentCondition<Wingmark>(id + 0x40u, 3f, comp => comp.StunStatus == default, "Knockback resolves")
+            .SetHint(StateMachine.StateHint.DowntimeEnd);
         ComponentCondition<SingleDoubleStyle1>(id + 0x50u, 1.5f, comp => comp.NumCasts != 0, "Double Style resolves")
             .DeactivateOnExit<Wingmark>()
             .DeactivateOnExit<SingleDoubleStyle1>();
@@ -215,8 +217,10 @@ sealed class M06SSugarRiotStates : StateMachineBuilder
             .ActivateOnEnter<Wingmark>();
         ComponentCondition<MousseDripTowers>(id + 0xA0u, 3.1f, comp => comp.Towers.Count != 0, "Towers 2 appear")
             .DeactivateOnEnter<MousseDripVoidzone>();
-        ComponentCondition<Wingmark>(id + 0xB0u, 8f, comp => comp.StunStatus != default, "Stun");
+        ComponentCondition<Wingmark>(id + 0xB0u, 8f, comp => comp.StunStatus != default, "Stun")
+            .SetHint(StateMachine.StateHint.DowntimeStart);
         ComponentCondition<Wingmark>(id + 0xC0u, 3f, comp => comp.StunStatus == default, "Knockback resolves")
+            .SetHint(StateMachine.StateHint.DowntimeEnd)
             .DeactivateOnExit<Wingmark>();
         ComponentCondition<TasteOfThunderAOE>(id + 0xD0u, 6.2f, comp => comp.NumCasts != 0, "Small circle AOEs 2")
             .ActivateOnEnter<TasteOfThunderAOE>()

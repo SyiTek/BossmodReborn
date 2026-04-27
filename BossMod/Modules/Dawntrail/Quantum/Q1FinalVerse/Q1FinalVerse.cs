@@ -5,7 +5,7 @@ sealed class TerrorEyeVoidTrapBallOfFire(BossModule module) : Components.SimpleA
 
 [ModuleInfo(BossModuleInfo.Maturity.WIP,
 StatesType = typeof(Q1FinalVerseStates),
-ConfigType = null,
+ConfigType = typeof(Q1FinalVerseConfig),
 ObjectIDType = typeof(OID),
 ActionIDType = typeof(AID),
 StatusIDType = typeof(SID),

@@ -137,6 +137,7 @@ sealed class M05SDancingGreenStates : StateMachineBuilder
         }
 
         Cast(id + 0x130u, (uint)AID.LetsPose, 3.2f, 5f, "Raidwide")
+            .SetHint(StateMachine.StateHint.Raidwide)
             .DeactivateOnExit<LetsDance>()
             .DeactivateOnExit<WavelengthAlphaBeta>();
     }
@@ -241,6 +242,7 @@ sealed class M05SDancingGreenStates : StateMachineBuilder
             ComponentCondition<LetsDanceRemix>(offset, i == 1 ? 8.4f : 1.5f, comp => comp.NumCasts == casts, desc);
         }
         Cast(id + 0x1C0, (uint)AID.LetsPoseRemix, 2.2f, 5f, "Raidwide")
+            .SetHint(StateMachine.StateHint.Raidwide)
             .DeactivateOnExit<LetsDanceRemix>();
     }
 
