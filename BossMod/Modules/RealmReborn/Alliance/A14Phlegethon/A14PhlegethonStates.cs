@@ -1,4 +1,4 @@
-﻿namespace BossMod.RealmReborn.Alliance.A14Phlegethon;
+namespace BossMod.RealmReborn.Alliance.A14Phlegethon;
 
 class A14PhlegethonStates : StateMachineBuilder
 {
@@ -10,8 +10,12 @@ class A14PhlegethonStates : StateMachineBuilder
             .ActivateOnEnter<MegiddoFlame4>()
             .ActivateOnEnter<MegiddoFlame5>()
             .ActivateOnEnter<MoonfallSlash>()
-            .ActivateOnEnter<AncientFlare1>()
-            .ActivateOnEnter<VacuumSlash2>();
-
+            .ActivateOnEnter<VacuumSlash2>()
+            .ActivateOnEnter<AbyssalSlash1>()
+            .ActivateOnEnter<AbyssalSlash2>()
+            .ActivateOnEnter<Pads>()
+            .ActivateOnEnter<AncientFlareVoidzone>()
+            .ActivateOnEnter<DynamicArenaBorder>()
+            .ActivateOnEnter<Adds>();
     }
 }

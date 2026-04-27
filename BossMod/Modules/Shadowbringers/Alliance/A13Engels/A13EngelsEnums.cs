@@ -15,6 +15,8 @@ public enum OID : uint
     SmallBiped = 0x2C08, // R0.960, x?
     Anogg = 0x2C83, // R0.500, x?
     Konogg = 0x2C82, // R0.500, x?
+    EnergyDispersalTower = 0x1EAEC7, // EventObj
+    IncendiaryBomb = 0x1EAEC8, // EventObj
 }
 
 public enum AID : uint

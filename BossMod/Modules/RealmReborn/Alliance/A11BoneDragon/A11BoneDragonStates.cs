@@ -1,4 +1,4 @@
-﻿namespace BossMod.RealmReborn.Alliance.A11BoneDragon;
+namespace BossMod.RealmReborn.Alliance.A11BoneDragon;
 
 class A11BoneDragonStates : StateMachineBuilder
 {
@@ -9,6 +9,10 @@ class A11BoneDragonStates : StateMachineBuilder
             .ActivateOnEnter<EvilEye>()
             .ActivateOnEnter<Stone>()
             .ActivateOnEnter<Level5Petrify>()
-            .Raw.Update = () => Module.PrimaryActor.IsDestroyed;
+            .ActivateOnEnter<MiasmaBreath>()
+            .ActivateOnEnter<Platinal>()
+            .ActivateOnEnter<Poison>()
+            .ActivateOnEnter<BossDeathTracker>()
+            .Raw.Update = () => Module.FindComponent<BossDeathTracker>()!.Dead || Module.PrimaryActor.IsDestroyed;
     }
 }
