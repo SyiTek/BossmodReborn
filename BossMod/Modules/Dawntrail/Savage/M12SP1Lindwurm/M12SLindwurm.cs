@@ -44,12 +44,17 @@ sealed class RefreshingOverkill2(BossModule module) : Components.RaidwideCast(mo
 sealed class Splattershed2(BossModule module) : Components.RaidwideCast(module, (uint)AID.Splattershed2);
 sealed class unk_48028(BossModule module) : Components.RaidwideCast(module, (uint)AID.unk_48028);
 
-[ModuleInfo(BossModuleInfo.Maturity.WIP,
-    Contributors = "SRP, additional enhancements by Topas",
+[ModuleInfo(BossModuleInfo.Maturity.Contributed,
+    Contributors = "SRP, additional enhancements by Topas, upstream port",
+    StatesType = typeof(M12SLindwurmStates),
     PrimaryActorOID = (uint)OID.Lindwurm1,
+    Expansion = BossModuleInfo.Expansion.Dawntrail,
+    Category = BossModuleInfo.Category.Savage,
     GroupType = BossModuleInfo.GroupType.CFC,
     GroupID = (uint)GroupID.Lindwurm,
-    NameID = (uint)NameID.Lindwurm1)]
+    NameID = (uint)NameID.Lindwurm1,
+    SortOrder = 1,
+    PlanLevel = 100)]
 public sealed class M12SLindwurm(WorldState ws, Actor primary) : BossModule(ws, primary, arenaCenter, DefaultBounds)
 {
     private static readonly WPos arenaCenter = new(100f, 100f);
