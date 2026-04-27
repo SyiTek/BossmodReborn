@@ -1,5 +1,6 @@
 ﻿using BossMod.AI;
 using BossMod.Autorotation;
+using BossMod.Pathfinding;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -10,7 +11,7 @@ sealed class IPCProvider : IDisposable
 {
     private Action? _disposeActions;
 
-    public IPCProvider(BossModuleManager bossmod, AIHints hints, RotationModuleManager autorotation, ActionManagerEx amex, MovementOverride movement, AIManager ai)
+    public IPCProvider(BossModuleManager bossmod, AIHints hints, RotationModuleManager autorotation, ActionManagerEx amex, MovementOverride movement, AIManager ai, ObstacleMapManager obstacles)
     {
         Register("HasModuleByDataId", (uint dataId) => BossModuleRegistry.FindByOID(dataId) != null);
 
@@ -28,7 +29,7 @@ sealed class IPCProvider : IDisposable
             if (sm.ActiveState == null)
                 return "ActiveState is null";
 
-            var sb = new System.Text.StringBuilder();
+            var sb = new StringBuilder();
             sb.Append($"Phase={sm.ActivePhaseIndex} State={sm.ActiveState.ID:X}({sm.ActiveState.Name}) Dur={sm.ActiveState.Duration:F1}s Hint={sm.ActiveState.EndHint}");
             var count = 0;
             var next = sm.ActiveState;
@@ -49,10 +50,14 @@ sealed class IPCProvider : IDisposable
                 next = next.NextStates?.Length == 1 ? next.NextStates[0] : null;
                 count++;
             }
-            if (!foundRW) sb.Append(" | RW=NONE");
-            if (!foundTB) sb.Append(" | TB=NONE");
-            if (next == null && count < 20) sb.Append($" | Chain ended at {count} states");
-            if (count >= 20) sb.Append(" | Walked 20+ states");
+            if (!foundRW)
+                sb.Append(" | RW=NONE");
+            if (!foundTB)
+                sb.Append(" | TB=NONE");
+            if (next == null && count < 20)
+                sb.Append($" | Chain ended at {count} states");
+            if (count >= 20)
+                sb.Append(" | Walked 20+ states");
             return sb.ToString();
         });
 
@@ -122,17 +127,13 @@ sealed class IPCProvider : IDisposable
         Register("Hints.NextDamageIn", () =>
         {
             var predicted = hints.PredictedDamage;
-            if (predicted.Count == 0)
-                return float.MaxValue;
-            return (float)(predicted[0].Activation - DateTime.Now).TotalSeconds;
+            return predicted.Count == 0 ? float.MaxValue : (float)(predicted[0].Activation - DateTime.Now).TotalSeconds;
         });
 
         Register("Hints.NextDamageType", () =>
         {
             var predicted = hints.PredictedDamage;
-            if (predicted.Count == 0)
-                return 0;
-            return (int)predicted[0].Type;
+            return predicted.Count == 0 ? 0 : (int)predicted[0].Type;
         });
 
         // Type-specific damage prediction endpoints — search ALL entries for the first matching type
@@ -162,16 +163,14 @@ sealed class IPCProvider : IDisposable
 
         Register("Hints.SpecialModeIn", () =>
         {
-            if (hints.ImminentSpecialMode == default)
-                return float.MaxValue;
-            return (float)(hints.ImminentSpecialMode.activation - DateTime.Now).TotalSeconds;
+            return hints.ImminentSpecialMode == default
+                ? float.MaxValue
+                : (float)(hints.ImminentSpecialMode.activation - DateTime.Now).TotalSeconds;
         });
 
         Register("Hints.SpecialModeType", () =>
         {
-            if (hints.ImminentSpecialMode == default)
-                return 0;
-            return (int)hints.ImminentSpecialMode.mode;
+            return hints.ImminentSpecialMode == default ? 0 : (int)hints.ImminentSpecialMode.mode;
         });
         Register("Configuration", (List<string> args, bool save) => Service.Config.ConsoleCommand(args.AsSpan(), save));
 
@@ -340,6 +339,10 @@ sealed class IPCProvider : IDisposable
 
         Register("AI.SetPreset", (string name) => ai.SetAIPreset(autorotation.Database.Presets.AllPresets.FirstOrDefault(x => x.Name.Trim().Equals(name.Trim(), StringComparison.OrdinalIgnoreCase))));
         Register("AI.GetPreset", () => ai.GetAIPreset);
+
+        Register("ObstacleMap.Generate", (Vector3 centerWorld, float radius, bool writeToFile) => obstacles.GenerateMap(centerWorld, radius, writeToFile));
+        Register("ObstacleMap.GetGenerationStatus", () => obstacles.GenerationStatus);
+        Register("ObstacleMap.HasTempMap", obstacles.HasTempMap);
     }
 
     public void Dispose() => _disposeActions?.Invoke();

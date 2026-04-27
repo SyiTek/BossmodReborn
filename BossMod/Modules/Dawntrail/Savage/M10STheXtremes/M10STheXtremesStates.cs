@@ -183,7 +183,7 @@ sealed class M10STheXtremesStates : StateMachineBuilder
 
         // change deep varial activation earlier for early detection using action timeline
         ActorCast(id + 0x40, _module.DeepBlue, (uint)AID.DeepVarialCast, 1.1f, 6.8f, true, "Big cone AOE") // 270.52 - 277.3
-            //.ActivateOnEnter<DeepVarial>()
+                                                                                                           //.ActivateOnEnter<DeepVarial>()
             .ActivateOnEnter<SteamBurst>()
             .DeactivateOnExit<DeepVarial>();
 
