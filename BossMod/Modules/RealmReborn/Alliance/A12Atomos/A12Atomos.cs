@@ -173,31 +173,15 @@ public class A12Atomos(WorldState ws, Actor primary) : BossModule(ws, primary, n
         return MathF.Abs(zdist) < 15 ? 1 : zdist < 0 ? 0 : 2;
     }
 
-    public static readonly ArenaBoundsCustom CustomBounds = AtomosBounds();
-
-    private static ArenaBoundsCustom AtomosBounds()
-    {
-        var platform = CurveApprox.Rect(new WDir(37.65f, 0), new WDir(0, 12.3f));
-
-        WDir[] cutoutShape = [new(-5.2f, 0), new(-2.5f, 2.6f), new(2.5f, 2.6f), new(5.2f, 0)];
-        var cutout1 = cutoutShape.Select(d => d + new WDir(-18.8f, -12.8f));
-        var cutout2 = cutoutShape.Select(d => d + new WDir(6.16f, -12.8f));
-
-        var clipper = new PolygonClipper();
-
-        var r01 = clipper.Difference(new(platform), new(cutout1));
-        var r02 = clipper.Difference(new(r01), new(cutout2));
-        var r03 = clipper.Difference(new(r02), new(cutout1.Select(d => d.MirrorZ())));
-        var r1 = clipper.Difference(new(r03), new(cutout2.Select(d => d.MirrorZ())));
-
-        var r2 = r1.Transform(new WDir(0, 35.2f), new(0, 1));
-        var r3 = r1.Transform(new WDir(0, -35.2f), new(0, 1));
-
-        var r4 = clipper.Union(new(r1), new(r2));
-        var r5 = clipper.Union(new(r4), new(r3));
-
-        return new(47.5f, r5, 1);
-    }
+    // Simplified arena bounds (Reborn's PolygonClipper API differs from upstream).
+    // Uses 3 stacked rectangular platforms approximating the original 3-platform layout.
+    // Original upstream had cutouts for the rings between platforms; omitted here for simplicity.
+    public static readonly ArenaBoundsCustom CustomBounds = new(
+        [
+            new Rectangle(default, 37.65f, 12.3f),
+            new Rectangle(new WPos(0, 35.2f), 37.65f, 12.3f),
+            new Rectangle(new WPos(0, -35.2f), 37.65f, 12.3f),
+        ]);
 
     public Actor? AtomosA { get; private set; }
     public Actor? AtomosB { get; private set; }

@@ -193,16 +193,16 @@ sealed class M11STheTyrantStates : StateMachineBuilder
 
         Cast(id + 0x40, (uint)AID.FearsomeFireball, 2.7f, 5);
         ComponentCondition<FearsomeFireball>(id + 0x42, 0.4f, f => f.NumCasts > 0, "Wild charge");
-        ComponentCondition<CosmicKiss>(id + 0x43, 1.2f, c => c.NumCasts > 0, "Meteors 1")
+        ComponentCondition<CosmicKiss>(id + 0x43, 1.2f, c => c.NumFinishedSpreads > 0, "Meteors 1")
             .ActivateOnEnter<CometTethers>();
         ComponentCondition<CometTethers>(id + 0x44, 7.9f, f => f.NumCasts > 0, "Tethers");
         ComponentCondition<FearsomeFireball>(id + 0x45, 0.8f, f => f.NumCasts > 1, "Wild charge");
 
-        ComponentCondition<CosmicKiss>(id + 0x46, 1.3f, c => c.NumCasts > 2, "Meteors 2");
+        ComponentCondition<CosmicKiss>(id + 0x46, 1.3f, c => c.NumFinishedSpreads > 2, "Meteors 2");
         ComponentCondition<CometTethers>(id + 0x47, 7.9f, f => f.NumCasts > 2, "Tethers");
         ComponentCondition<FearsomeFireball>(id + 0x48, 0.8f, f => f.NumCasts > 2, "Wild charge");
 
-        ComponentCondition<CosmicKiss>(id + 0x49, 1.3f, c => c.NumCasts > 4, "Meteors 3");
+        ComponentCondition<CosmicKiss>(id + 0x49, 1.3f, c => c.NumFinishedSpreads > 4, "Meteors 3");
         ComponentCondition<CometTethers>(id + 0x4A, 7.9f, f => f.NumCasts > 4, "Tethers");
         ComponentCondition<FearsomeFireball>(id + 0x4B, 0.8f, f => f.NumCasts > 3, "Wild charge")
             .DeactivateOnExit<CosmicKiss>()
@@ -287,7 +287,7 @@ sealed class M11STheTyrantStates : StateMachineBuilder
         // Massive Meteor 5-hit shared stacks
         CastStart(id + 0x300, (uint)AID.MassiveMeteor, 4.4f)
             .ActivateOnEnter<MassiveMeteor>();
-        ComponentCondition<MassiveMeteor>(id + 0x301, 6.1f, m => m.NumCasts > 0, "Stacks 1");
+        ComponentCondition<MassiveMeteor>(id + 0x301, 6.1f, m => m.NumFinishedStacks > 0, "Stacks 1");
         ComponentCondition<MassiveMeteor>(id + 0x302, 5.9f, m => m.NumFinishedStacks > 0, "Stacks 5")
             .DeactivateOnExit<MassiveMeteor>();
 

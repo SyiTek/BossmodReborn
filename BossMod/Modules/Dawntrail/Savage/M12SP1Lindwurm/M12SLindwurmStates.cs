@@ -67,7 +67,7 @@ sealed class M12SLindwurmStates : StateMachineBuilder
             .DeactivateOnExit<RavenousReach1>();
 
         // Stack/spread
-        ComponentCondition<SharedGrotesquerieAct1>(id + 0x21, 0.3f, g => g.NumCasts > 0, "Stack/spread/cones")
+        ComponentCondition<SharedGrotesquerieAct1>(id + 0x21, 0.3f, g => g.NumFinishedStacks + g.NumFinishedSpreads > 0, "Stack/spread/cones")
             .DeactivateOnExit<SharedGrotesquerieAct1>();
 
         // Big puddles (Burst)
@@ -77,7 +77,7 @@ sealed class M12SLindwurmStates : StateMachineBuilder
             .DeactivateOnExit<Burst>();
 
         // Tankbuster spreads
-        ComponentCondition<VisceralBurst>(id + 0x31, 0.5f, v => v.NumCasts > 0, "Stack + tankbusters")
+        ComponentCondition<VisceralBurst>(id + 0x31, 0.5f, v => v.NumFinishedSpreads > 0, "Stack + tankbusters")
             .SetHint(StateMachine.StateHint.Tankbuster)
             .DeactivateOnExit<VisceralBurst>()
             .DeactivateOnExit<BurstingGrotesquerieAct1>();
@@ -195,7 +195,7 @@ sealed class M12SLindwurmStates : StateMachineBuilder
             .DeactivateOnExit<RavenousReach1>();
 
         // Spreads (Curtain Call stack/spread)
-        ComponentCondition<GrotesquerieCurtainCall>(id + 0x30, 0.4f, c => c.NumCasts > 0, "Spreads")
+        ComponentCondition<GrotesquerieCurtainCall>(id + 0x30, 0.4f, c => c.NumFinishedStacks + c.NumFinishedSpreads > 0, "Spreads")
             .ActivateOnEnter<Burst>();
 
         // Chains appear (no dedicated component in Reborn, use timed gap)
