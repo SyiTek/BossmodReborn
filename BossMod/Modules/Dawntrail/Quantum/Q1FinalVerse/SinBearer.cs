@@ -102,7 +102,7 @@ sealed class SinBearer(BossModule module) : BossComponent(module)
         {
             if (Bearer is { } b)
             {
-                if (Arena.Config.ShowOutlinesAndShadows)
+                if (MiniArena.Config.ShowOutlinesAndShadows)
                 {
                     Arena.AddCircle(b.Position, 4f, 0xFF000000u, 2f);
                 }
@@ -115,7 +115,7 @@ sealed class SinBearer(BossModule module) : BossComponent(module)
         {
             if (player == Bearer)
             {
-                if (Arena.Config.ShowOutlinesAndShadows)
+                if (MiniArena.Config.ShowOutlinesAndShadows)
                 {
                     Arena.AddCircle(player.Position, 4f, 0xFF000000u, 2f);
                 }

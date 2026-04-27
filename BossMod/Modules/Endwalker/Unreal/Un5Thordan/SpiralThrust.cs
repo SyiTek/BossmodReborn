@@ -30,7 +30,7 @@ abstract class SpiralThrust(BossModule module, float predictionDelay) : Componen
                 if (caster.OID is (uint)OID.Vellguine or (uint)OID.Paulecrain or (uint)OID.Ignasse && (caster.Position - Module.Center).LengthSq() > 25f * 25f)
                 {
                     // prediction
-                    _aoes.Add(new(_shape, caster.Position, Angle.FromDirection(Module.Center - caster.Position), WorldState.FutureTime(_predictionDelay), Risky: false));
+                    _aoes.Add(new(_shape, caster.Position, Angle.FromDirection(Module.Center - caster.Position), WorldState.FutureTime(_predictionDelay)));
                 }
                 break;
             case (uint)AID.SpiralThrust:

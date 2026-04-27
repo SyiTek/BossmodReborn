@@ -1,6 +1,6 @@
 namespace BossMod.Endwalker.Unreal.Un5Thordan;
 
-class HiemalStormSpread(BossModule module) : Components.UniformStackSpread(module, 0f, 6f, alwaysShowSpreads: true)
+class HiemalStormSpread(BossModule module) : Components.UniformStackSpread(module, 0f, 6f)
 {
     public override void OnEventIcon(Actor actor, uint iconID, ulong targetID)
     {
