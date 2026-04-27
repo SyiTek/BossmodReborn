@@ -95,16 +95,16 @@ public sealed unsafe class DebugAddon : IDisposable
                 res += ", ";
             res += values[i].Type switch
             {
-                FFXIVClientStructs.FFXIV.Component.GUI.AtkValue.AtkValueType.Int => $"int {values[i].Int}",
-                FFXIVClientStructs.FFXIV.Component.GUI.AtkValue.AtkValueType.Bool => $"bool {values[i].Byte}",
-                FFXIVClientStructs.FFXIV.Component.GUI.AtkValue.AtkValueType.UInt => $"uint {values[i].UInt}",
-                FFXIVClientStructs.FFXIV.Component.GUI.AtkValue.AtkValueType.Float => $"int {values[i].Float}",
-                FFXIVClientStructs.FFXIV.Component.GUI.AtkValue.AtkValueType.String => $"string",
-                FFXIVClientStructs.FFXIV.Component.GUI.AtkValue.AtkValueType.String8 => $"string8",
-                FFXIVClientStructs.FFXIV.Component.GUI.AtkValue.AtkValueType.Vector => $"vector",
-                FFXIVClientStructs.FFXIV.Component.GUI.AtkValue.AtkValueType.Pointer => $"pointer",
-                FFXIVClientStructs.FFXIV.Component.GUI.AtkValue.AtkValueType.ManagedString => $"astring",
-                FFXIVClientStructs.FFXIV.Component.GUI.AtkValue.AtkValueType.ManagedVector => $"avector",
+                FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int => $"int {values[i].Int}",
+                FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Bool => $"bool {values[i].Byte}",
+                FFXIVClientStructs.FFXIV.Component.GUI.ValueType.UInt => $"uint {values[i].UInt}",
+                FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Float => $"int {values[i].Float}",
+                FFXIVClientStructs.FFXIV.Component.GUI.ValueType.String => $"string",
+                FFXIVClientStructs.FFXIV.Component.GUI.ValueType.String8 => $"string8",
+                FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Vector => $"vector",
+                FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Pointer => $"pointer",
+                FFXIVClientStructs.FFXIV.Component.GUI.ValueType.ManagedString => $"astring",
+                FFXIVClientStructs.FFXIV.Component.GUI.ValueType.ManagedVector => $"avector",
                 _ => $"{values[i].Type} unknown"
             };
         }
