@@ -26,27 +26,31 @@ public enum AID : uint
     VoidFireII = 1829, // Dira->location, 3.0s cast, range 5 circle
 }
 
-class Adds(BossModule module) : Components.AddsMulti(module, [OID.Dira, OID.Valefor, OID.GreaterDemon]);
-class VoidFireII(BossModule module) : Components.StandardAOEs(module, AID.VoidFireII, 5);
+class Adds(BossModule module) : Components.AddsMulti(module, [(uint)OID.Dira, (uint)OID.Valefor, (uint)OID.GreaterDemon]);
+class VoidFireII(BossModule module) : Components.SimpleAOEs(module, (uint)AID.VoidFireII, 5);
 class Ring(BossModule module) : Components.GenericInvincible(module)
 {
     private BitMask _vulnerable;
+    private readonly List<Actor> _forbidden = [];
 
-    protected override IEnumerable<Actor> ForbiddenTargets(int slot, Actor actor)
+    protected override ReadOnlySpan<Actor> ForbiddenTargets(int slot, Actor actor)
     {
+        _forbidden.Clear();
         var platform = A12Atomos.GetPlatform(actor);
 
-        foreach (var e in Module.Enemies(OID.Dira).Concat(Module.Enemies(OID.Valefor)).Concat(Module.Enemies(OID.GreaterDemon)))
+        foreach (var e in Module.Enemies((uint)OID.Dira).Concat(Module.Enemies((uint)OID.Valefor)).Concat(Module.Enemies((uint)OID.GreaterDemon)))
             if (platform != A12Atomos.GetPlatform(e))
-                yield return e;
+                _forbidden.Add(e);
 
         var m = (A12Atomos)Module;
         if (m.AtomosA != null && (platform != 0 || !_vulnerable[0]))
-            yield return m.AtomosA;
+            _forbidden.Add(m.AtomosA);
         if (m.AtomosB != null && (platform != 1 || !_vulnerable[1]))
-            yield return m.AtomosB;
+            _forbidden.Add(m.AtomosB);
         if (m.AtomosC != null && (platform != 2 || !_vulnerable[2]))
-            yield return m.AtomosC;
+            _forbidden.Add(m.AtomosC);
+
+        return CollectionsMarshal.AsSpan(_forbidden);
     }
 
     public override void OnActorEAnim(Actor actor, uint state)
@@ -79,9 +83,9 @@ class Pad(BossModule module) : BossComponent(module)
     {
         if (_pads[0] == null)
         {
-            _pads[0] = Module.Enemies(OID.PlatformA).FirstOrDefault();
-            _pads[1] = Module.Enemies(OID.PlatformB).FirstOrDefault();
-            _pads[2] = Module.Enemies(OID.PlatformC).FirstOrDefault();
+            _pads[0] = Module.Enemies((uint)OID.PlatformA).FirstOrDefault();
+            _pads[1] = Module.Enemies((uint)OID.PlatformB).FirstOrDefault();
+            _pads[2] = Module.Enemies((uint)OID.PlatformC).FirstOrDefault();
         }
     }
 
@@ -106,10 +110,10 @@ class Pad(BossModule module) : BossComponent(module)
                 continue;
 
             var color = GetPadBoss(i)?.IsDeadOrDestroyed == true
-                ? ArenaColor.Border
+                ? Colors.Border
                 : _activePads[i]
-                    ? ArenaColor.Safe
-                    : ArenaColor.Danger;
+                    ? Colors.Safe
+                    : Colors.Danger;
             var width = i == myPlatform ? 2 : 1;
 
             Arena.AddCircle(pad.Position, 4, color, width);
@@ -140,7 +144,7 @@ class Pad(BossModule module) : BossComponent(module)
 
         var padCount = Raid.WithoutSlot().InRadius(myPad.Position, 4).Exclude(actor);
         if (padCount.Count() < 4)
-            hints.AddForbiddenZone(ShapeContains.Donut(myPad.Position, 4, 500), DateTime.MaxValue);
+            hints.AddForbiddenZone(new SDDonut(myPad.Position, 4, 500), DateTime.MaxValue);
     }
 
     private Actor? GetPadBoss(int platform) => ((A12Atomos)Module).Bosses[(platform + 1) % 3];
@@ -155,7 +159,7 @@ class A12AtomosStates : StateMachineBuilder
             .ActivateOnEnter<Ring>()
             .ActivateOnEnter<Pad>()
             .ActivateOnEnter<VoidFireII>()
-            .Raw.Update = () => module.Enemies(OID.Boss).All(b => b.IsDead);
+            .Raw.Update = () => module.Enemies((uint)OID.Boss).All(b => b.IsDead);
     }
 }
 
@@ -203,13 +207,13 @@ public class A12Atomos(WorldState ws, Actor primary) : BossModule(ws, primary, n
 
     protected override void UpdateModule()
     {
-        AtomosA ??= Enemies(OID.Boss).FirstOrDefault(b => b.Position.InCircle(new WPos(253, 244), 5));
-        AtomosB ??= Enemies(OID.Boss).FirstOrDefault(b => b.Position.InCircle(new WPos(253, 279), 5));
-        AtomosC ??= Enemies(OID.Boss).FirstOrDefault(b => b.Position.InCircle(new WPos(253, 315), 5));
+        AtomosA ??= Enemies((uint)OID.Boss).FirstOrDefault(b => b.Position.InCircle(new WPos(253, 244), 5));
+        AtomosB ??= Enemies((uint)OID.Boss).FirstOrDefault(b => b.Position.InCircle(new WPos(253, 279), 5));
+        AtomosC ??= Enemies((uint)OID.Boss).FirstOrDefault(b => b.Position.InCircle(new WPos(253, 315), 5));
     }
 
     protected override void DrawEnemies(int pcSlot, Actor pc)
     {
-        Arena.Actors(Enemies(OID.Boss), ArenaColor.Enemy);
+        Arena.Actors(Enemies((uint)OID.Boss), Colors.Enemy);
     }
 }

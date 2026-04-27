@@ -12,20 +12,18 @@ public enum AID : uint
 }
 class ForbiddenGoobue(BossModule module) : Components.GenericInvincible(module)
 {
-    protected override IEnumerable<Actor> ForbiddenTargets(int slot, Actor actor)
+    protected override ReadOnlySpan<Actor> ForbiddenTargets(int slot, Actor actor)
     {
         var gems = Module.FindComponent<GemHints>();
         if (gems == null || !gems.AllGemsDisabled)
-        {
-            foreach (var boss in Module.Enemies(OID.Boss))
-                yield return boss;
-        }
+            return CollectionsMarshal.AsSpan(Module.Enemies((uint)OID.Boss));
+        return [];
     }
 }
-class Inhale(BossModule module) : Components.StandardAOEs(module, AID.Inhale, new AOEShapeCone(23f, 60.Degrees()));
+class Inhale(BossModule module) : Components.SimpleAOEs(module, (uint)AID.Inhale, new AOEShapeCone(23f, 60.Degrees()));
 class GemHints(BossModule module) : BossComponent(module)
 {
-    private IEnumerable<Actor> Gems => Module.Enemies(OID.Gems);
+    private IEnumerable<Actor> Gems => Module.Enemies((uint)OID.Gems);
     private readonly List<Actor> _disabledGems = [];
     public bool AllGemsDisabled => !AvailableGems.Any();
     private bool _succ;
@@ -49,10 +47,10 @@ class GemHints(BossModule module) : BossComponent(module)
 
     public override void DrawArenaForeground(int pcSlot, Actor pc)
     {
-        Arena.Actors(AvailableGems, ArenaColor.Object, true);
+        Arena.Actors(AvailableGems, Colors.Object, true);
         {
             foreach (var rock in AvailableGems)
-                Arena.AddCircle(rock.Position, 4f, ArenaColor.Safe);
+                Arena.AddCircle(rock.Position, 4f, Colors.Safe);
         }
     }
     public override void OnCastStarted(Actor caster, ActorCastInfo spell)

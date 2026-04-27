@@ -17,13 +17,11 @@ public enum IconID : uint
 class ForbiddenGolem(BossModule module) : Components.GenericInvincible(module)
 {
     private bool _rocksCharged;
-    protected override IEnumerable<Actor> ForbiddenTargets(int slot, Actor actor)
+    protected override ReadOnlySpan<Actor> ForbiddenTargets(int slot, Actor actor)
     {
-        if (!_rocksCharged)
-        {
-            foreach (var boss in Module.Enemies(OID.Boss))
-                yield return boss;
-        }
+        if (_rocksCharged)
+            return [];
+        return CollectionsMarshal.AsSpan(Module.Enemies((uint)OID.Boss));
     }
     public override void OnMapEffect(byte index, uint state)
     {
@@ -38,10 +36,10 @@ class ForbiddenGolem(BossModule module) : Components.GenericInvincible(module)
         }
     }
 }
-class MagneticRock(BossModule module) : Components.BaitAwayIcon(module, new AOEShapeCircle(5f), (uint)IconID.MagneticMarker, AID.MagneticRock, centerAtTarget: true);
+class MagneticRock(BossModule module) : Components.BaitAwayIcon(module, new AOEShapeCircle(5f), (uint)IconID.MagneticMarker, (uint)AID.MagneticRock, centerAtTarget: true);
 class RockHints(BossModule module) : BossComponent(module)
 {
-    private IEnumerable<Actor> Rocks => Module.Enemies(OID.Rock);
+    private IEnumerable<Actor> Rocks => Module.Enemies((uint)OID.Rock);
     private Actor? MagneticTarget;
 
     private readonly List<Actor> _disabledRocks = [];
@@ -76,12 +74,12 @@ class RockHints(BossModule module) : BossComponent(module)
 
     public override void DrawArenaForeground(int pcSlot, Actor pc)
     {
-        Arena.Actors(AvailableRocks, ArenaColor.Object, true);
+        Arena.Actors(AvailableRocks, Colors.Object, true);
 
         if (pc == MagneticTarget)
         {
             foreach (var rock in AvailableRocks)
-                Arena.AddCircle(rock.Position, 4f, ArenaColor.Safe);
+                Arena.AddCircle(rock.Position, 4f, Colors.Safe);
         }
     }
 
@@ -128,9 +126,9 @@ class V07NStonePuppetStates : StateMachineBuilder
 [ModuleInfo(BossModuleInfo.Maturity.Contributed, Contributors = "VeraNala", GroupType = BossModuleInfo.GroupType.CFC, GroupID = 1066, NameID = 14353)]
 public class V07NStonePuppet(WorldState ws, Actor primary) : BossModule(ws, primary, new(149.66f, -631.79f), CustomBounds)
 {
-    private static readonly List<WDir> vertices =
+    private static readonly WPos[] vertices =
         [
             new(171.5f, -656.5f), new(181f, -650.64f), new(181f, -644.64f), new(152.34f, -619.77f), new(126.16f, -615.1f), new(120.31f, -649.2f), new(129.59f, -639.89f), new(134.96f, -625.99f), new(146f, -632.55f), new(149.08f, -634.55f)
         ];
-    public static readonly ArenaBoundsCustom CustomBounds = new(30, new(vertices.Select(v => v - new WDir(149.66f, -631.79f))));
+    public static readonly ArenaBoundsCustom CustomBounds = new([new PolygonCustom(vertices)]);
 }

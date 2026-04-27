@@ -17,18 +17,18 @@ public enum AID : uint
     MagitekSpread = 6027, // Boss->self, 3.0s cast, range 20+R 240-degree cone
 }
 
-class MagitekSlug(BossModule module) : Components.StandardAOEs(module, AID.MagitekSlug, new AOEShapeRect(60, 2));
-class AetherochemicalGrenado(BossModule module) : Components.StandardAOEs(module, AID.AetherochemicalGrenado, 8);
-class SelfDetonate(BossModule module) : Components.CastHint(module, AID.SelfDetonate, "Kill turret before detonation!", true)
+class MagitekSlug(BossModule module) : Components.SimpleAOEs(module, (uint)AID.MagitekSlug, new AOEShapeRect(60, 2));
+class AetherochemicalGrenado(BossModule module) : Components.SimpleAOEs(module, (uint)AID.AetherochemicalGrenado, 8);
+class SelfDetonate(BossModule module) : Components.CastHint(module, (uint)AID.SelfDetonate, "Kill turret before detonation!", true)
 {
     public override void AddAIHints(int slot, Actor actor, PartyRolesConfig.Assignment assignment, AIHints hints)
     {
         foreach (var h in hints.PriorityTargets)
-            if (h.Actor.CastInfo?.Action == WatchedAction)
+            if (h.Actor.CastInfo?.Action.ID == WatchedAction)
                 h.Priority = 5;
     }
 }
-class MagitekSpread(BossModule module) : Components.StandardAOEs(module, AID.MagitekSpread, new AOEShapeCone(20.55f, 120.Degrees()));
+class MagitekSpread(BossModule module) : Components.SimpleAOEs(module, (uint)AID.MagitekSpread, new AOEShapeCone(20.55f, 120.Degrees()));
 
 class RegulaVanHydrusStates : StateMachineBuilder
 {
@@ -45,5 +45,5 @@ class RegulaVanHydrusStates : StateMachineBuilder
 [ModuleInfo(BossModuleInfo.Maturity.Contributed, GroupType = BossModuleInfo.GroupType.Quest, GroupID = 67824, NameID = 3818)]
 public class RegulaVanHydrus(WorldState ws, Actor primary) : BossModule(ws, primary, new(230, 79), new ArenaBoundsCircle(20))
 {
-    protected override void DrawEnemies(int pcSlot, Actor pc) => Arena.Actors(WorldState.Actors.Where(x => !x.IsAlly), ArenaColor.Enemy);
+    protected override void DrawEnemies(int pcSlot, Actor pc) => Arena.Actors(WorldState.Actors.Where(x => !x.IsAlly), Colors.Enemy);
 }

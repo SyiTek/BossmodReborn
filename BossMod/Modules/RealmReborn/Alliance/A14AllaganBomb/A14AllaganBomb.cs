@@ -18,14 +18,15 @@ public enum AID : uint
     CorruptedTail = 1771, // Vassago->player, no cast, single-target
 }
 
-class Adds(BossModule module) : Components.AddsMulti(module, [OID.Vassago, OID.AllaganBalloon, OID.AllaganNapalm]);
+class Adds(BossModule module) : Components.AddsMulti(module, [(uint)OID.Vassago, (uint)OID.AllaganBalloon, (uint)OID.AllaganNapalm]);
 
 class BossPrio(BossModule module) : Components.GenericInvincible(module)
 {
-    protected override IEnumerable<Actor> ForbiddenTargets(int slot, Actor actor)
+    protected override ReadOnlySpan<Actor> ForbiddenTargets(int slot, Actor actor)
     {
-        if (Module.Enemies(OID.Vassago).Any(v => !v.IsDead))
-            yield return Module.PrimaryActor;
+        if (Module.Enemies((uint)OID.Vassago).Any(v => !v.IsDead))
+            return new[] { Module.PrimaryActor };
+        return [];
     }
 }
 

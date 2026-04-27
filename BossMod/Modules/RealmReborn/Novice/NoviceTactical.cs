@@ -166,17 +166,17 @@ class StartingPositions(BossModule module) : BossComponent(module)
     public override void AddAIHints(int slot, Actor actor, PartyRolesConfig.Assignment assignment, AIHints hints)
     {
         if (readyPos is WPos { } pos)
-            hints.AddForbiddenZone(ShapeContains.InvertedCircle(pos, radius));
+            hints.AddForbiddenZone(new SDInvertedCircle(pos, radius));
     }
     public override void DrawArenaForeground(int pcSlot, Actor pc)
     {
         if (readyPos is WPos { } pos)
-            Arena.AddCircle(pos, radius, ArenaColor.Safe);
+            Arena.AddCircle(pos, radius, Colors.Safe);
     }
 }
 class Interact(BossModule module) : BossComponent(module)
 {
-    public Actor? InteractNPC => Module.Enemies(OID.MasterOfTrials).FirstOrDefault();
+    public Actor? InteractNPC => Module.Enemies((uint)OID.MasterOfTrials).FirstOrDefault();
     public bool interactReady;
     public bool trialComplete;
     public override void AddAIHints(int slot, Actor actor, PartyRolesConfig.Assignment assignment, AIHints hints)
@@ -247,9 +247,9 @@ class Interact(BossModule module) : BossComponent(module)
 
 #region NA01
 
-class NA01Glaciate1(BossModule module) : Components.SpreadFromIcon(module, (uint)IconID.NA01GlaciateSpread1, AID.NA01Glaciate1, 6f, 0, true);
-class NA01Glaciate2(BossModule module) : Components.SpreadFromIcon(module, (uint)IconID.NA01GlaciateSpread2, AID.NA01Glaciate3, 6f, 0, true);
-class NA01SpectralBlaze1(BossModule module) : Components.StackWithIcon(module, (uint)IconID.NA01SpectralBlazeStack1, AID.NA01SpectralBlazeVisual1, 6f, 0, 2)
+class NA01Glaciate1(BossModule module) : Components.SpreadFromIcon(module, (uint)IconID.NA01GlaciateSpread1, (uint)AID.NA01Glaciate1, 6f, 0);
+class NA01Glaciate2(BossModule module) : Components.SpreadFromIcon(module, (uint)IconID.NA01GlaciateSpread2, (uint)AID.NA01Glaciate3, 6f, 0);
+class NA01SpectralBlaze1(BossModule module) : Components.StackWithIcon(module, (uint)IconID.NA01SpectralBlazeStack1, (uint)AID.NA01SpectralBlazeVisual1, 6f, 0, 2)
 {
     public override void OnEventCast(Actor caster, ActorCastEvent spell)
     {
@@ -260,7 +260,7 @@ class NA01SpectralBlaze1(BossModule module) : Components.StackWithIcon(module, (
         }
     }
 }
-class NA01SpectralBlaze2(BossModule module) : Components.StackWithIcon(module, (uint)IconID.NA01SpectralBlazeStack2, AID.NA01SpectralBlazeVisual2, 6f, 0, 2)
+class NA01SpectralBlaze2(BossModule module) : Components.StackWithIcon(module, (uint)IconID.NA01SpectralBlazeStack2, (uint)AID.NA01SpectralBlazeVisual2, 6f, 0, 2)
 {
     public override void OnEventCast(Actor caster, ActorCastEvent spell)
     {
@@ -271,7 +271,7 @@ class NA01SpectralBlaze2(BossModule module) : Components.StackWithIcon(module, (
         }
     }
 }
-class NA01ScorchingStreak1(BossModule module) : Components.BaitAwayIcon(module, new AOEShapeRect(44, 5), (uint)IconID.NA01ScorchingStreakTankbuster, AID.NA01ScorchingStreakVisual1, centerAtTarget: false, damageType: AIHints.PredictedDamageType.Tankbuster)
+class NA01ScorchingStreak1(BossModule module) : Components.BaitAwayIcon(module, new AOEShapeRect(44, 5), (uint)IconID.NA01ScorchingStreakTankbuster, (uint)AID.NA01ScorchingStreakVisual1, centerAtTarget: false, damageType: AIHints.PredictedDamageType.Tankbuster)
 {
     public override void AddAIHints(int slot, Actor actor, PartyRolesConfig.Assignment assignment, AIHints hints)
     {
@@ -280,11 +280,11 @@ class NA01ScorchingStreak1(BossModule module) : Components.BaitAwayIcon(module, 
         {
             if (actor.Role is Role.Tank)
             {
-                hints.AddForbiddenZone(ShapeContains.InvertedCircle(new WPos(0f, -15f), 3));
+                hints.AddForbiddenZone(new SDInvertedCircle(new WPos(0f, -15f), 3));
             }
             else
             {
-                hints.AddForbiddenZone(ShapeContains.InvertedCircle(new WPos(0f, 15f), 3));
+                hints.AddForbiddenZone(new SDInvertedCircle(new WPos(0f, 15f), 3));
             }
         }
     }
@@ -296,25 +296,25 @@ class NA01ScorchingStreak1(BossModule module) : Components.BaitAwayIcon(module, 
         }
     }
 }
-class NA01PiercingStone1(BossModule module) : Components.StandardChasingAOEs(module, new AOEShapeCircle(4f), AID.NA01PiercingStone1, AID.NA01PiercingStone2, 5f, 3, 5)
+class NA01PiercingStone1(BossModule module) : Components.StandardChasingAOEs(module, new AOEShapeCircle(4f), (uint)AID.NA01PiercingStone1, (uint)AID.NA01PiercingStone2, 5f, 3, 5)
 {
     public override void AddAIHints(int slot, Actor actor, PartyRolesConfig.Assignment assignment, AIHints hints)
     {
         base.AddAIHints(slot, actor, assignment, hints);
         if (Chasers.Count > 0)
         {
-            hints.AddForbiddenZone(ShapeContains.Circle(new WPos(0f, 13f), 30));
+            hints.AddForbiddenZone(new SDCircle(new WPos(0f, 13f), 30));
         }
     }
 }
-class NA01PiercingStone2(BossModule module) : Components.StandardChasingAOEs(module, new AOEShapeCircle(4f), AID.NA01PiercingStone4, AID.NA01PiercingStone5, 5f, 3, 5)
+class NA01PiercingStone2(BossModule module) : Components.StandardChasingAOEs(module, new AOEShapeCircle(4f), (uint)AID.NA01PiercingStone4, (uint)AID.NA01PiercingStone5, 5f, 3, 5)
 {
     public override void AddAIHints(int slot, Actor actor, PartyRolesConfig.Assignment assignment, AIHints hints)
     {
         base.AddAIHints(slot, actor, assignment, hints);
         if (Chasers.Count > 0)
         {
-            hints.AddForbiddenZone(ShapeContains.DonutSector(new WPos(0f, 0f), 13, 20, 45.Degrees(), 135.Degrees()));
+            hints.AddForbiddenZone(new SDDonutSector(new WPos(0f, 0f), 13, 20, 45.Degrees(), 135.Degrees()));
         }
     }
 }
@@ -324,15 +324,13 @@ class NA01FrigidRing(BossModule module) : Components.GenericAOEs(module)
     private static readonly AOEShapeDonut donut = new(10, 20);
     private static readonly AOEShapeCircle circ = new(10);
 
-    public override IEnumerable<AOEInstance> ActiveAOEs(int slot, Actor actor)
+    public override ReadOnlySpan<AOEInstance> ActiveAOEs(int slot, Actor actor)
     {
-        if (aoes.Count > 0)
-        {
-            foreach (var e in aoes.Take(1))
-            {
-                yield return e with { Color = ArenaColor.AOE };
-            }
-        }
+        if (aoes.Count == 0)
+            return [];
+        var first = aoes[0];
+        first.Color = Colors.AOE;
+        return new AOEInstance[] { first };
     }
     public override void OnCastStarted(Actor caster, ActorCastInfo spell)
     {
@@ -356,19 +354,19 @@ class NA01FrigidRing(BossModule module) : Components.GenericAOEs(module)
     {
         if (aoes.Count > 1)
         {
-            hints.AddForbiddenZone(ShapeContains.InvertedCircle(new WPos(0, 0), 9f));
+            hints.AddForbiddenZone(new SDInvertedCircle(new WPos(0, 0), 9f));
         }
         else if (aoes.Count == 1)
-            hints.AddForbiddenZone(ShapeContains.Circle(new WPos(0, 0), 11f));
+            hints.AddForbiddenZone(new SDCircle(new WPos(0, 0), 11f));
     }
 }
-class NA01Fireflood(BossModule module) : Components.StandardAOEs(module, AID.NA01Fireflood, 15f);
-class NA01BlazingRing(BossModule module) : Components.StandardAOEs(module, AID.NA01BlazingRing, new AOEShapeDonut(8, 25));
+class NA01Fireflood(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA01Fireflood, 15f);
+class NA01BlazingRing(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA01BlazingRing, new AOEShapeDonut(8, 25));
 #endregion NA01
 
 #region NA02
 
-class NA02RogueWave(BossModule module) : Components.KnockbackFromCastTarget(module, AID.NA02RogueWave1, 15f, shape: new AOEShapeCircle(25f))
+class NA02RogueWave(BossModule module) : Components.SimpleKnockbacks(module, (uint)AID.NA02RogueWave1, 15f, shape: new AOEShapeCircle(25f))
 {
     public override void AddAIHints(int slot, Actor actor, PartyRolesConfig.Assignment assignment, AIHints hints)
     {
@@ -378,13 +376,13 @@ class NA02RogueWave(BossModule module) : Components.KnockbackFromCastTarget(modu
         {
             foreach (var caster in Casters)
             {
-                hints.AddForbiddenZone(ShapeContains.InvertedCircle(caster.Position, 3));
+                hints.AddForbiddenZone(new SDInvertedCircle(caster.Origin, 3));
             }
         }
     }
 }
 
-class NA02RogueWave2(BossModule module) : Components.KnockbackFromCastTarget(module, AID.NA02RogueWave3, 15f, shape: new AOEShapeCircle(25f))
+class NA02RogueWave2(BossModule module) : Components.SimpleKnockbacks(module, (uint)AID.NA02RogueWave3, 15f, shape: new AOEShapeCircle(25f))
 {
     public override void AddAIHints(int slot, Actor actor, PartyRolesConfig.Assignment assignment, AIHints hints)
     {
@@ -394,31 +392,32 @@ class NA02RogueWave2(BossModule module) : Components.KnockbackFromCastTarget(mod
         {
             foreach (var caster in Casters)
             {
-                hints.AddForbiddenZone(ShapeContains.InvertedCone(caster.Position, 3, 90.Degrees(), 40.Degrees()));
+                hints.AddForbiddenZone(new SDInvertedCone(caster.Origin, 3, 90.Degrees(), 40.Degrees()));
             }
         }
     }
 }
 
-class NA02Border(BossModule module) : Components.StandardAOEs(module, null!, new AOEShapeDonut(18, 25))
+class NA02Border(BossModule module) : Components.SimpleAOEs(module, default, new AOEShapeDonut(18, 25))
 {
-    public override IEnumerable<AOEInstance> ActiveAOEs(int slot, Actor actor)
+    public override ReadOnlySpan<AOEInstance> ActiveAOEs(int slot, Actor actor)
     {
         if (Module.WorldState.CurrentCFCID == 1013 && ((AID?)Module.PrimaryActor.CastInfo?.Action.ID) is AID.NA02RogueWave or AID.NA02RogueWave2 or AID.NA02Windage or AID.NA02Upwell)
-            yield return new(Shape, new WPos(0, 0));
+            return new AOEInstance[] { new(Shape, new WPos(0, 0)) };
+        return [];
     }
 }
 
-class NA02Windage(BossModule module) : Components.StandardAOEs(module, AID.NA02Windage1, 5f);
-class NA02WindageKnockback(BossModule module) : Components.KnockbackFromCastTarget(module, AID.NA02Windage2, 10f);
-class NA02FuriousFlare(BossModule module) : Components.StandardAOEs(module, AID.NA02FuriousFlare1, 18f);
-class NA02FuriousFlare2(BossModule module) : Components.StandardAOEs(module, AID.FuriousFlare3, 20f);
-class NA02ThunderingPillar(BossModule module) : Components.CastTowers(module, AID.NA02ThunderingPillar1, 4f);
-class NA02ThunderingPillar2(BossModule module) : Components.CastTowers(module, AID.NA02ThunderingPillar2, 4f);
-class NA02WaterDrop(BossModule module) : Components.StandardAOEs(module, AID.NA02WaterDrop, 10f);
-class NA02Upwell(BossModule module) : Components.StandardAOEs(module, AID.NA02Upwell2, 5f);
+class NA02Windage(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA02Windage1, 5f);
+class NA02WindageKnockback(BossModule module) : Components.SimpleKnockbacks(module, (uint)AID.NA02Windage2, 10f);
+class NA02FuriousFlare(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA02FuriousFlare1, 18f);
+class NA02FuriousFlare2(BossModule module) : Components.SimpleAOEs(module, (uint)AID.FuriousFlare3, 20f);
+class NA02ThunderingPillar(BossModule module) : Components.CastTowers(module, (uint)AID.NA02ThunderingPillar1, 4f);
+class NA02ThunderingPillar2(BossModule module) : Components.CastTowers(module, (uint)AID.NA02ThunderingPillar2, 4f);
+class NA02WaterDrop(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA02WaterDrop, 10f);
+class NA02Upwell(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA02Upwell2, 5f);
 
-class NA02UpwellKnockback(BossModule module) : Components.KnockbackFromCastTarget(module, AID.NA02Upwell1, 20f)
+class NA02UpwellKnockback(BossModule module) : Components.SimpleKnockbacks(module, (uint)AID.NA02Upwell1, 20f)
 {
     public override void AddAIHints(int slot, Actor actor, PartyRolesConfig.Assignment assignment, AIHints hints)
     {
@@ -428,13 +427,13 @@ class NA02UpwellKnockback(BossModule module) : Components.KnockbackFromCastTarge
         {
             foreach (var caster in Casters)
             {
-                hints.AddForbiddenZone(ShapeContains.InvertedCone(caster.Position, 8, 270.Degrees(), 30.Degrees()));
+                hints.AddForbiddenZone(new SDInvertedCone(caster.Origin, 8, 270.Degrees(), 30.Degrees()));
             }
         }
     }
 }
-class NA02BlazingSurge(BossModule module) : Components.StandardAOEs(module, AID.NA02BlazingSurge1, new AOEShapeCone(20f, 90.Degrees()));
-class NA02BlazingSurge2(BossModule module) : Components.StandardAOEs(module, AID.NA02BlazingSurge2, new AOEShapeCone(20f, 90.Degrees()));
+class NA02BlazingSurge(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA02BlazingSurge1, new AOEShapeCone(20f, 90.Degrees()));
+class NA02BlazingSurge2(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA02BlazingSurge2, new AOEShapeCone(20f, 90.Degrees()));
 #endregion
 
 #region NA03
@@ -468,7 +467,7 @@ class NA03TetherIntercept(BossModule module) : BossComponent(module)
             var distance = Module.PrimaryActor.Position - bomb.Position;
             var halfLength = distance.Length() / 2 / 3 * 2;
 
-            hints.AddForbiddenZone(ShapeContains.InvertedRect(Module.Center - distance.Scaled(0.5f), distance.ToAngle(), halfLength, halfLength, 1f));
+            hints.AddForbiddenZone(new SDInvertedRect(Module.Center - distance.Scaled(0.5f), distance.ToAngle(), halfLength, halfLength, 1f));
         }
     }
 
@@ -488,10 +487,10 @@ class NA03TetherIntercept(BossModule module) : BossComponent(module)
 
         if (bomb == null)
             return;
-        Arena.AddLine(Module.Center, bomb.Position, ArenaColor.Safe, 2f);
+        Arena.AddLine(Module.Center, bomb.Position, Colors.Safe, 2f);
     }
 
-    public override void OnTethered(Actor source, ActorTetherInfo tether)
+    public override void OnTethered(Actor source, in ActorTetherInfo tether)
     {
         if (tether.ID == TID)
         {
@@ -501,7 +500,7 @@ class NA03TetherIntercept(BossModule module) : BossComponent(module)
         }
     }
 
-    public override void OnUntethered(Actor source, ActorTetherInfo tether)
+    public override void OnUntethered(Actor source, in ActorTetherInfo tether)
     {
         if (tether.ID == TID)
         {
@@ -512,15 +511,15 @@ class NA03TetherIntercept(BossModule module) : BossComponent(module)
     }
 }
 
-class NA03Glaciate(BossModule module) : Components.StandardAOEs(module, AID.NA03Glaciate1, 6f);
-class NA03FanOfFlames(BossModule module) : Components.StandardAOEs(module, AID.NA03FanOfFlames1, new AOEShapeCone(60f, 23.Degrees(), 0.Degrees()));
-class NA03FanOfFlames2(BossModule module) : Components.StandardAOEs(module, AID.NA03FanOfFlames2, new AOEShapeCone(60f, 23.Degrees(), 0.Degrees()));
-class NA03BitterChill(BossModule module) : Components.StandardAOEs(module, AID.NA03BitterChill1, 10f);
-class NA03PetrifyingLight(BossModule module) : Components.CastGaze(module, AID.NA03PetrifyingLight2);
-class NA03PetrifyingLight2(BossModule module) : Components.CastGaze(module, AID.NA03PetrifyingLight4);
-class NA03FrigidRing(BossModule module) : Components.StandardAOEs(module, AID.NA03FrigidRing, new AOEShapeDonut(10, 20));
-class NA03Withdraw(BossModule module) : Components.RaidwideCast(module, AID.NA03Withdraw);
-class NA03Fireflood(BossModule module) : Components.StandardAOEs(module, AID.NA03Fireflood, 15f);
+class NA03Glaciate(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA03Glaciate1, 6f);
+class NA03FanOfFlames(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA03FanOfFlames1, new AOEShapeCone(60f, 23.Degrees(), 0.Degrees()));
+class NA03FanOfFlames2(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA03FanOfFlames2, new AOEShapeCone(60f, 23.Degrees(), 0.Degrees()));
+class NA03BitterChill(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA03BitterChill1, 10f);
+class NA03PetrifyingLight(BossModule module) : Components.CastGaze(module, (uint)AID.NA03PetrifyingLight2);
+class NA03PetrifyingLight2(BossModule module) : Components.CastGaze(module, (uint)AID.NA03PetrifyingLight4);
+class NA03FrigidRing(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA03FrigidRing, new AOEShapeDonut(10, 20));
+class NA03Withdraw(BossModule module) : Components.RaidwideCast(module, (uint)AID.NA03Withdraw);
+class NA03Fireflood(BossModule module) : Components.SimpleAOEs(module, (uint)AID.NA03Fireflood, 15f);
 #endregion NA03
 
 class NoviceTacticalStates : StateMachineBuilder

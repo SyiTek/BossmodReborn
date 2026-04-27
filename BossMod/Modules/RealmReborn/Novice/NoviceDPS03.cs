@@ -9,14 +9,13 @@ public enum OID : uint
 
 class AttackAsTargeted(BossModule module) : Components.GenericInvincible(module)
 {
-    protected override IEnumerable<Actor> ForbiddenTargets(int slot, Actor actor)
+    protected override ReadOnlySpan<Actor> ForbiddenTargets(int slot, Actor actor)
     {
         var gladiator = WorldState.Actors.FirstOrDefault(a => a.OID == (uint)OID.N12Gladiator);
         if (gladiator != null && gladiator.TargetID != 0)
         {
             var target = WorldState.Actors.Find(gladiator.TargetID);
-
-            return WorldState.Actors.Exclude(target);
+            return WorldState.Actors.Exclude(target).ToArray();
         }
         return [];
     }

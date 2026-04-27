@@ -48,7 +48,7 @@ public enum SID : uint
     Transporting = 404 // none->player, extra=0x15
 }
 
-class SugarBlizzard(BossModule module) : Components.StandardAOEs(module, AID.SugarBlizzard, new AOEShapeCone(15, 45.Degrees()));
+class SugarBlizzard(BossModule module) : Components.SimpleAOEs(module, (uint)AID.SugarBlizzard, new AOEShapeCone(15, 45.Degrees()));
 
 class DecorateCake(BossModule module) : BossComponent(module)
 {

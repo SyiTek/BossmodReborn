@@ -46,16 +46,16 @@ public enum AID : uint
     HeadButt = 10341, // SteppeYamaa1->location, 2.5s cast, range 3+R width 3 rect
 }
 
-class Mangle(BossModule module) : Components.StandardAOEs(module, AID.MangleVisual, new AOEShapeCone(10f, 60.Degrees()));
-class Rush2(BossModule module) : Components.ChargeAOEs(module, AID.GarulaRush, 4f);
-class Lullaby(BossModule module) : Components.StandardAOEs(module, AID.Lullaby, 3.7f);
-class HeadButt(BossModule module) : Components.StandardAOEs(module, AID.HeadButt, new AOEShapeRect(4.92f, 1.5f));
+class Mangle(BossModule module) : Components.SimpleAOEs(module, (uint)AID.MangleVisual, new AOEShapeCone(10f, 60.Degrees()));
+class Rush2(BossModule module) : Components.ChargeAOEs(module, (uint)AID.GarulaRush, 4f);
+class Lullaby(BossModule module) : Components.SimpleAOEs(module, (uint)AID.Lullaby, 3.7f);
+class HeadButt(BossModule module) : Components.SimpleAOEs(module, (uint)AID.HeadButt, new AOEShapeRect(4.92f, 1.5f));
 
 class Rush(BossModule module) : Components.GenericAOEs(module)
 {
     private AOEInstance? _nextAOE;
 
-    public override IEnumerable<AOEInstance> ActiveAOEs(int slot, Actor actor) => Utils.ZeroOrOne(_nextAOE);
+    public override ReadOnlySpan<AOEInstance> ActiveAOEs(int slot, Actor actor) => _nextAOE is { } aoe ? new AOEInstance[] { aoe } : [];
 
     public override void OnCastStarted(Actor caster, ActorCastInfo spell)
     {
@@ -77,15 +77,15 @@ class Rush(BossModule module) : Components.GenericAOEs(module)
     }
 }
 
-class TailSwing(BossModule module) : Components.GenericAOEs(module, AID.TailSwingVisual)
+class TailSwing(BossModule module) : Components.GenericAOEs(module, (uint)AID.TailSwingVisual)
 {
     private AOEInstance? _nextAOE;
 
-    public override IEnumerable<AOEInstance> ActiveAOEs(int slot, Actor actor) => Utils.ZeroOrOne(_nextAOE);
+    public override ReadOnlySpan<AOEInstance> ActiveAOEs(int slot, Actor actor) => _nextAOE is { } aoe ? new AOEInstance[] { aoe } : [];
 
     public override void OnEventCast(Actor caster, ActorCastEvent spell)
     {
-        if (spell.Action == WatchedAction)
+        if (spell.Action.ID == WatchedAction)
         {
             _nextAOE = new(new AOEShapeCone(11, 90.Degrees()), caster.Position, spell.Rotation - 90.Degrees(), WorldState.FutureTime(1.9f));
         }
@@ -95,15 +95,15 @@ class TailSwing(BossModule module) : Components.GenericAOEs(module, AID.TailSwin
     }
 }
 
-class SweepingFlames(BossModule module) : Components.GenericAOEs(module, AID.SweepingFlamesVisual)
+class SweepingFlames(BossModule module) : Components.GenericAOEs(module, (uint)AID.SweepingFlamesVisual)
 {
     private AOEInstance? _nextAOE;
 
-    public override IEnumerable<AOEInstance> ActiveAOEs(int slot, Actor actor) => Utils.ZeroOrOne(_nextAOE);
+    public override ReadOnlySpan<AOEInstance> ActiveAOEs(int slot, Actor actor) => _nextAOE is { } aoe ? new AOEInstance[] { aoe } : [];
 
     public override void OnEventCast(Actor caster, ActorCastEvent spell)
     {
-        if (spell.Action == WatchedAction)
+        if (spell.Action.ID == WatchedAction)
         {
             _nextAOE = new(new AOEShapeCone(11, 60.Degrees()), caster.Position, spell.Rotation, WorldState.FutureTime(1.5f));
         }
@@ -113,15 +113,15 @@ class SweepingFlames(BossModule module) : Components.GenericAOEs(module, AID.Swe
     }
 }
 
-class Mangle2(BossModule module) : Components.GenericAOEs(module, AID.Mangle2Visual)
+class Mangle2(BossModule module) : Components.GenericAOEs(module, (uint)AID.Mangle2Visual)
 {
     private AOEInstance? _nextAOE;
 
-    public override IEnumerable<AOEInstance> ActiveAOEs(int slot, Actor actor) => Utils.ZeroOrOne(_nextAOE);
+    public override ReadOnlySpan<AOEInstance> ActiveAOEs(int slot, Actor actor) => _nextAOE is { } aoe ? new AOEInstance[] { aoe } : [];
 
     public override void OnCastStarted(Actor caster, ActorCastInfo spell)
     {
-        if (spell.Action == WatchedAction)
+        if (spell.Action.ID == WatchedAction)
         {
             _nextAOE = new(new AOEShapeCone(9, 45.Degrees()), caster.Position, spell.Rotation, Module.CastFinishAt(spell, 0.6f));
         }
@@ -134,9 +134,9 @@ class Mangle2(BossModule module) : Components.GenericAOEs(module, AID.Mangle2Vis
     }
 }
 
-class FireballStack1(BossModule module) : Components.StackWithCastTargets(module, AID.FireballBossFirst, 5);
-class FireballStack2(BossModule module) : Components.StackWithCastTargets(module, AID.FireballBossRest, 5);
-class FirePuddle(BossModule module) : Components.PersistentVoidzoneAtCastTarget(module, 5, AID.FireballFirst, m => m.Enemies(OID.Fireball).Where(e => e.EventState != 7), 0.5f)
+class FireballStack1(BossModule module) : Components.StackWithCastTargets(module, (uint)AID.FireballBossFirst, 5);
+class FireballStack2(BossModule module) : Components.StackWithCastTargets(module, (uint)AID.FireballBossRest, 5);
+class FirePuddle(BossModule module) : Components.VoidzoneAtCastTarget(module, 5, (uint)AID.FireballFirst, m => m.Enemies((uint)OID.Fireball).Where(e => e.EventState != 7), 0.5f)
 {
     public override void OnEventCast(Actor caster, ActorCastEvent spell)
     {
@@ -149,31 +149,31 @@ class FirePuddle(BossModule module) : Components.PersistentVoidzoneAtCastTarget(
     }
 }
 
-class KingOfTheSkies(BossModule module) : Components.GenericLineOfSightAOE(module, AID.KingOfTheSkiesVisual, 100, false)
+class KingOfTheSkies(BossModule module) : Components.GenericLineOfSightAOE(module, (uint)AID.KingOfTheSkiesVisual, 100, false)
 {
     public override void OnEventCast(Actor caster, ActorCastEvent spell)
     {
-        if (spell.Action == WatchedAction)
-            Modify(new(100, 82), Module.Enemies(OID.Garula).Select(e => (e.Position, e.HitboxRadius)), WorldState.FutureTime(7));
+        if (spell.Action.ID == WatchedAction)
+            Modify(new(100, 82), Module.Enemies((uint)OID.Garula).Select(e => (e.Position, e.HitboxRadius)), WorldState.FutureTime(7));
 
         if ((AID)spell.Action.ID == AID.KingOfTheSkies)
             Modify(null, []);
     }
 }
 
-class Adds(BossModule module) : Components.AddsMulti(module, [OID.SteppeYamaa, OID.SteppeYamaa1, OID.SteppeSheep, OID.SteppeCoeurl, OID.Garula]);
+class Adds(BossModule module) : Components.AddsMulti(module, [(uint)OID.SteppeYamaa, (uint)OID.SteppeYamaa1, (uint)OID.SteppeSheep, (uint)OID.SteppeCoeurl, (uint)OID.Garula]);
 
 class TargetHints(BossModule module) : BossComponent(module)
 {
     private Actor? Tail;
 
-    public override void OnTargetable(Actor actor)
+    public override void OnActorTargetable(Actor actor)
     {
         if (actor.OID == (uint)OID.WyvernsTail)
             Tail = actor;
     }
 
-    public override void OnUntargetable(Actor actor)
+    public override void OnActorUntargetable(Actor actor)
     {
         if (actor.OID == (uint)OID.WyvernsTail)
             Tail = null;
