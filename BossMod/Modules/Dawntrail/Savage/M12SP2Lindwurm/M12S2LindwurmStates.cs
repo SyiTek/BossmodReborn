@@ -330,6 +330,7 @@ class M12S2LindwurmStates : StateMachineBuilder
         Cast(id + 0x20, (uint)AID.ArcadianHellRaidwide, 11.3f, 5, "Raidwide x9")
             .SetHint(StateMachine.StateHint.Raidwide);
 
-        Cast(id + 0x100, (uint)AID.ArcadianHellEnrage, 12.9f, 10, "Enrage");
+        Cast(id + 0x100, (uint)AID.ArcadianHellEnrage, 12.9f, 10, "Enrage")
+            .SetHint(StateMachine.StateHint.Raidwide);
     }
 }
